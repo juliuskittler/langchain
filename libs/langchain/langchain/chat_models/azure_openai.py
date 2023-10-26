@@ -149,6 +149,13 @@ class AzureChatOpenAI(ChatOpenAI):
         }
 
     def _create_chat_result(self, response: Mapping[str, Any]) -> ChatResult:
+        # Print response for debugging purposes
+        print("Response: \n{}".format(response))
+        if "choices" not in response:
+            raise KeyError(
+                "KeyError: 'choices' not in response. Response: \n{}".format(response)
+            )
+
         for res in response["choices"]:
             if res.get("finish_reason", None) == "content_filter":
                 raise ValueError(

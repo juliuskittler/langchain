@@ -169,7 +169,7 @@ class ChatOpenAI(BaseChatModel):
     model_kwargs: Dict[str, Any] = Field(default_factory=dict)
     """Holds any model parameters valid for `create` call not explicitly specified."""
     openai_api_key: Optional[str] = None
-    """Base URL path for API requests, 
+    """Base URL path for API requests,
     leave blank if not using a proxy or service emulator."""
     openai_api_base: Optional[str] = None
     openai_organization: Optional[str] = None
@@ -186,14 +186,14 @@ class ChatOpenAI(BaseChatModel):
     max_tokens: Optional[int] = None
     """Maximum number of tokens to generate."""
     tiktoken_model_name: Optional[str] = None
-    """The model name to pass to tiktoken when using this class. 
-    Tiktoken is used to count the number of tokens in documents to constrain 
-    them to be under a certain limit. By default, when set to None, this will 
-    be the same as the embedding model name. However, there are some cases 
-    where you may want to use this Embedding class with a model name not 
-    supported by tiktoken. This can include when using Azure embeddings or 
-    when using one of the many model providers that expose an OpenAI-like 
-    API but with different models. In those cases, in order to avoid erroring 
+    """The model name to pass to tiktoken when using this class.
+    Tiktoken is used to count the number of tokens in documents to constrain
+    them to be under a certain limit. By default, when set to None, this will
+    be the same as the embedding model name. However, there are some cases
+    where you may want to use this Embedding class with a model name not
+    supported by tiktoken. This can include when using Azure embeddings or
+    when using one of the many model providers that expose an OpenAI-like
+    API but with different models. In those cases, in order to avoid erroring
     when tiktoken is called, you can specify a model name to use here."""
 
     class Config:
@@ -374,6 +374,13 @@ class ChatOpenAI(BaseChatModel):
         return message_dicts, params
 
     def _create_chat_result(self, response: Mapping[str, Any]) -> ChatResult:
+        # Print response for debugging purposes
+        print("Response: \n{}".format(response))
+        if "choices" not in response:
+            raise KeyError(
+                "KeyError: 'choices' not in response. Response: \n{}".format(response)
+            )
+
         generations = []
         for res in response["choices"]:
             message = convert_dict_to_message(res["message"])
